@@ -11,10 +11,8 @@ scene.enter(async (ctx) => {
         users
     });
 
-    console.log("USERS===========", users)
-    console.log("DATA============", data);
-
-    ctx.replyWithDocument({source: data, filename: "baza.xlsx"})
+    ctx.replyWithDocument({source: data, filename: "baza.xlsx"});
+    ctx.scene.enter("start");
 });
 
 module.exports = scene;
