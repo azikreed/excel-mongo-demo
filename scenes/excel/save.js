@@ -8,7 +8,7 @@ const scene = new Scenes.WizardScene(
         let text = "📁 Excel file yuboring";
         let keyboard = Markup.keyboard([
             ["◀️ Orqaga"]
-        ]);
+        ]).resize();
         ctx.reply(text, keyboard);
         ctx.wizard.next();
     },
