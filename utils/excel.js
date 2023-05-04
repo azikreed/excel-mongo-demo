@@ -5,27 +5,34 @@ const { Stream } = require('stream');
 
 
 exports.generateDb = async ({
-    users
+    users,
+    settings
 }) => {
     const workbook = new ExcelJS.Workbook();
 
-    const usersSheet = workbook.addWorksheet('Foydalanuvchilar');
-    usersSheet.columns = [
-        { header: "T/r", key: "number", width: 5 },
-        { header: "Ism", key: "name", width: 15 },
-        { header: "Familiya", key: "surname", width: 20 }
-    ];
+    function checkAndCreateWorkSheet(name) {
+        let workSheet = workbook.getWorksheet(name) ? workbook.getWorksheet(name) : workbook.addWorksheet(name);
+        workSheet.columns = [
+            { header: "T/r", key: "number", width: 5 },
+            { header: "Ism", key: "name", width: 15 },
+            { header: "Familiya", key: "surname", width: 20 }
+        ];
+        workSheet.getRow(1).eachCell(cell => cell.font = { bold: true });
+        return workSheet ? workSheet : null;
+    }
 
     users.forEach((user, index) => {
+        let workSheet = checkAndCreateWorkSheet(`${user.createdAt.getHours()}-${user.createdAt.getMinutes()}`);
         user.number = index + 1;
         user.name = user.name;
         user.surname = user.surname;
-        usersSheet.addRow(user);
+        workSheet.addRow(user);
     });
-    usersSheet.getRow(1).eachCell(cell => cell.font = { bold: true });
 
     return await workbook.xlsx.writeBuffer();
 }
+
+
 
 exports.updateDb = async (data, cb) => {
     let workbook = new ExcelJS.Workbook();
@@ -50,11 +57,14 @@ exports.updateDb = async (data, cb) => {
             }
         })
 
-        console.log(users);
 
         await User.deleteMany({});
-        await User.insertMany(users);
-
+        const saved = await User.insertMany(users);
+        // let date = saved[0].createdAt;
+        // let dateInArray = date.split(":");
+        // dateInArray[dateInArray.length - 1] = null;
+        // console.log(dateInArray.join(":"));
+        // console.log(`${date.getHours() > 9 ? date.getHours() : `0` + date.getHours()}:${date.getMinutes() > 9 ? date.getMinutes() : `0` + date.getMinutes()}`);
         cb(true);
     })
 }

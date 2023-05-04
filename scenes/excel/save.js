@@ -14,7 +14,6 @@ const scene = new Scenes.WizardScene(
     },
     async (ctx) => {
         let file = ctx.message?.document;
-        console.log(file);
         if (!file) return ctx.scene.reenter();
         const { href: link } = await ctx.telegram.getFileLink(file.file_id);
         const { data } = await axios.get(link, { responseType: 'arraybuffer' });
