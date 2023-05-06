@@ -5,8 +5,7 @@ const { Stream } = require('stream');
 
 
 exports.generateDb = async ({
-    users,
-    settings
+    users
 }) => {
     const workbook = new ExcelJS.Workbook();
 
